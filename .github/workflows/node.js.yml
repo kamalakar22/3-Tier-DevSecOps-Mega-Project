@@ -11,8 +11,7 @@ on:
 
 jobs:
   build:
-
-    runs-on: Agent-1
+    runs-on: ubuntu-latest
     container:
       image: gkamalakar06/devops-image:v1
 
