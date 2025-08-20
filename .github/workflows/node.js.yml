@@ -42,10 +42,10 @@ jobs:
           name: trivy-fs-report
           path: fs-report.html
 
-  # ---------- Docker Build & Push ----------
-  docker:
-    runs-on: Agent-1   
-    needs: build             
+  # ---------- Docker Build & Push - Client ----------
+  docker-client:
+    runs-on: Agent-1
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -56,9 +56,32 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker image
+      - name: Build and Push Client Image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./client
+          file: ./client/Dockerfile
           push: true
-          tags: gkamalakar06/devops-app:latest
+          tags: gkamalakar06/devops-client:latest
+
+  # ---------- Docker Build & Push - API ----------
+  docker-api:
+    runs-on: Agent-1
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push API Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./api
+          file: ./api/Dockerfile
+          push: true
+          tags: gkamalakar06/devops-api:latest
