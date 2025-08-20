@@ -17,32 +17,32 @@ jobs:
 
 
     steps:
-    - name: Checkout 
-    - uses: actions/checkout@v4
-    - name: Frontend Compilation
-      working-directory: client
-      run: |
+     - name: Checkout 
+     - uses: actions/checkout@v4
+     - name: Frontend Compilation
+       working-directory: client
+       run: |
           find . -name "*.js" -exec node --check {} +
-    - name: Backend Compilation
-      working-directory: api
-      run: |
+     - name: Backend Compilation
+       working-directory: api
+       run: |
           find . -name "*.js" -exec node --check {} +
 
 
-    - name: GitLeaks Scan - Client
-      run: gitleaks detect --source ./client --exit-code 0
+     - name: GitLeaks Scan - Client
+       run: gitleaks detect --source ./client --exit-code 0
 
-    - name: GitLeaks Scan - API
-      run: gitleaks detect --source ./api --exit-code 0
+     - name: GitLeaks Scan - API
+       run: gitleaks detect --source ./api --exit-code 0
 
     
-    - name: Trivy File System Scan
-      run: trivy fs --format table -o fs-report.html .
+     - name: Trivy File System Scan
+       run: trivy fs --format table -o fs-report.html .
 
    
-    - name: Upload Trivy Report
-      uses: actions/upload-artifact@v4
-      with:
+     - name: Upload Trivy Report
+       uses: actions/upload-artifact@v4
+       with:
         name: trivy-fs-report
         path: fs-report.html
    
