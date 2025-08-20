@@ -1,0 +1,49 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: Agent-1
+    container:
+      image: gkamalakar06/devops-image:v1
+
+
+    steps:
+    - name: Checkout 
+    - uses: actions/checkout@v4
+    - name: Frontend Compilation
+      working-directory: client
+      run: |
+          find . -name "*.js" -exec node --check {} +
+    - name: Backend Compilation
+      working-directory: api
+      run: |
+          find . -name "*.js" -exec node --check {} +
+
+
+    - name: GitLeaks Scan - Client
+      run: gitleaks detect --source ./client --exit-code 0
+
+    - name: GitLeaks Scan - API
+      run: gitleaks detect --source ./api --exit-code 0
+
+    
+    - name: Trivy File System Scan
+      run: trivy fs --format table -o fs-report.html .
+
+   
+    - name: Upload Trivy Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-fs-report
+        path: fs-report.html
+   
