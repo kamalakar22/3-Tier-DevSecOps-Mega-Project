@@ -64,6 +64,23 @@ jobs:
           push: true
           tags: gkamalakar06/devops-client:latest
 
+  # ---------- Trivy Scan - Client Image ----------
+  scan-client:
+    runs-on: Agent-1
+    container:
+      image: gkamalakar06/devops-image:v1
+      options: --user 0
+    needs: docker-client
+    steps:
+      - name: Trivy Scan Client Image
+        run: trivy image --format table -o trivy-client-report.html gkamalakar06/devops-client:latest
+
+      - name: Upload Client Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-client-report
+          path: trivy-client-report.html
+
   # ---------- Docker Build & Push - API ----------
   docker-api:
     runs-on: Agent-1
@@ -85,3 +102,20 @@ jobs:
           file: ./api/Dockerfile
           push: true
           tags: gkamalakar06/devops-api:latest
+
+  # ---------- Trivy Scan - API Image ----------
+  scan-api:
+    runs-on: Agent-1
+    container:
+      image: gkamalakar06/devops-image:v1
+      options: --user 0
+    needs: docker-api
+    steps:
+      - name: Trivy Scan API Image
+        run: trivy image --format table -o trivy-api-report.html gkamalakar06/devops-api:latest
+
+      - name: Upload API Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-api-report
+          path: trivy-api-report.html
